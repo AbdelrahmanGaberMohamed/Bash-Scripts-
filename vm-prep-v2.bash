@@ -32,7 +32,7 @@ systemctl enable --now firewalld.service
 systemctl enable --now chronydservice
 
 #Configure Time-Zone and sync
-datetimectl set-timezone Africa/Cairo
+timedatectl set-timezone Africa/Cairo
 sed -i "s/pool.*/server ${NTP}/g" /etc/chrony.conf
 systemctl restart chronyd.service
 
