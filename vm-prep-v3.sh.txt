@@ -1,0 +1,31 @@
+#!/bin/bash
+#Script name: vm-prep.sh
+#Purpose: 
+# 1) Update the system to the latest version and install the following tools:
+#               telnet, vim, bash-completion, traceroute, tcpdump, firewalld, unzip,  wget, curl, net-tools, git
+# 2) Set timeZone to Africa/Cairo configure time sync with ntp
+# OS: Centos-8-Stream
+#Author: Abdelrahman Gaber
+#Date: 20/2/2023
+#Exit Codes:
+#       0: Success
+# Welcome
+whiptail --msgbox --title "Welocome" "Starting VM Setup ..." --fb 10 70
+# Variables 
+NTP=$(whiptail --inputbox --title "NTP" "Enter NTP server IP: " --fb 10 70 3>&1 1>&2 2>&3)
+TMZS=("Asia/Ryiadh" "" off "Africa/Cairo" "" off)
+TMZ=$(whiptail --radiolist "Select TimeZone" --fb 20 70 10 "${TMZS[@]}" 3>&1 1>&2 2>&3)
+
+###############################################################################################################
+#Update system and install essential tools
+yum update -y
+yum install -y telnet vim bash-completion traceroute tcpdump firewalld unzip  wget curl net-tools git chrony
+systemctl enable --now firewalld.service
+systemctl enable --now chronyd.service
+sed -i "/centos/s/.*/server ${NTP}/g" /etc/chrony.conf
+systemctl restart chronyd.service
+timedatectl set-timezone ${TMZ}
+
+echo "Done. BYE :)"
+
+exit 0
