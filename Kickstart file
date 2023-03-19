@@ -1,0 +1,58 @@
+#on=DEVEL
+# System authorization information
+auth --enableshadow --passalgo=sha512
+# Use CDROM installation media
+#cdrom
+firewall --disabled
+selinux disabled
+install
+url --url="ftp://10.0.0.25/pub/"
+# Use graphical install
+graphical
+# Run the Setup Agent on first boot
+firstboot --enable
+ignoredisk --only-use=sda
+# Keyboard layouts
+keyboard --vckeymap=us --xlayouts='us'
+# System language
+lang en_US.UTF-8
+
+# Network information
+network  --bootproto=dhcp --device=ens33 --ipv6=auto --activate
+network  --hostname=localhost.localdomain
+
+# Root password
+rootpw --iscrypted $6$Mv/Jbj1X2hhkZFir$bXvdeZZJmoPnHiQheEBM24YrQT9TVluJJ9CraaqIs/Cy7E5a91KUcOeHOiQ8LwJEQRUzpFNc95Cz6kFRWDowH.
+# System services
+services --enabled="chronyd"
+# System timezone
+timezone Africa/Cairo --isUtc
+user --groups=wheel --name=sayed --password=$1$Y26WqwMY$ZnOMQVJFV2JuJZNWAmRI90
+
+# System bootloader configuration
+bootloader --append=" crashkernel=auto" --location=mbr --boot-drive=sda
+autopart --type=lvm
+# Partition clearing information
+clearpart --none --initlabel
+
+%packages
+@^minimal
+@core
+chrony
+kexec-tools
+
+reboot
+%end
+
+%addon com_redhat_kdump --enable --reserve-mb='auto'
+
+%end
+
+%anaconda
+pwpolicy root --minlen=6 --minquality=1 --notstrict --nochanges --notempty
+pwpolicy user --minlen=6 --minquality=1 --notstrict --nochanges --emptyok
+pwpolicy luks --minlen=6 --minquality=1 --notstrict --nochanges --notempty
+%end
+
+
+
